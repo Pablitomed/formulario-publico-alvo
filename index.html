@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Estudo de Público-Alvo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .section-indicator {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .radio-option:hover,
+        .checkbox-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 10px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .radio-label,
+        .checkbox-label {
+            cursor: pointer;
+            flex: 1;
+            font-weight: 400;
+        }
+
+        .optional-text {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-previous {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-previous:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-next,
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-next:hover,
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-next:disabled,
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Estudo de Público-Alvo</h1>
+            <p>Ajude-nos a entender melhor seu produto e público</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <div class="section-indicator">
+            <span id="sectionNumber">Seção 1 de 4</span>
+        </div>
+
+        <form id="targetAudienceForm">
+            <!-- SEÇÃO 1: INFORMAÇÕES BÁSICAS DO PRODUTO -->
+            <div class="section active" data-section="1">
+                <h2 class="section-title">Informações Básicas do Produto</h2>
+
+                <div class="form-group">
+                    <label for="productName">Nome do Produto <span class="required">*</span></label>
+                    <input type="text" id="productName" name="productName" placeholder="Ex: Aplicativo de Gestão de Tarefas" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription">Descrição detalhada do produto <span class="required">*</span></label>
+                    <textarea id="productDescription" name="productDescription" placeholder="Descreva seu produto em detalhes..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="productCategory">Categoria principal <span class="required">*</span></label>
+                    <select id="productCategory" name="productCategory" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="Tecnologia">Tecnologia</option>
+                        <option value="Moda">Moda</option>
+                        <option value="Alimentos">Alimentos</option>
+                        <option value="Saúde">Saúde</option>
+                        <option value="Serviços">Serviços</option>
+                        <option value="Educação">Educação</option>
+                        <option value="Entretenimento">Entretenimento</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="productPrice">Preço de venda (R$) <span class="required">*</span></label>
+                    <input type="text" id="productPrice" name="productPrice" placeholder="Ex: 99,90" required>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 2: CARACTERÍSTICAS DO PRODUTO -->
+            <div class="section" data-section="2">
+                <h2 class="section-title">Características do Produto</h2>
+
+                <div class="form-group">
+                    <label for="productBenefits">Quais são os principais benefícios do produto? <span class="required">*</span></label>
+                    <textarea id="productBenefits" name="productBenefits" placeholder="Liste os principais benefícios..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="problemsSolved">Quais problemas o produto resolve? <span class="required">*</span></label>
+                    <textarea id="problemsSolved" name="problemsSolved" placeholder="Descreva os problemas que seu produto resolve..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="competitiveAdvantage">Qual é a sua diferença entre produção e concorrência? <span class="required">*</span></label>
+                    <textarea id="competitiveAdvantage" name="competitiveAdvantage" placeholder="Explique o que diferencia seu produto..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="productStage">Estágio do produto <span class="required">*</span></label>
+                    <select id="productStage" name="productStage" required>
+                        <option value="">Selecione um estágio</option>
+                        <option value="Ideia">Ideia</option>
+                        <option value="Desenvolvimento">Desenvolvimento</option>
+                        <option value="Lançamento">Lançamento</option>
+                        <option value="Crescimento">Crescimento</option>
+                        <option value="Maturidade">Maturidade</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 3: MERCADO E PÚBLICO -->
+            <div class="section" data-section="3">
+                <h2 class="section-title">Mercado e Público</h2>
+
+                <div class="form-group">
+                    <label for="targetAudienceIdea">Você já tem uma ideia de alvo público? Se sim, descreva. <span class="optional-text">(Opcional)</span></label>
+                    <textarea id="targetAudienceIdea" name="targetAudienceIdea" placeholder="Descreva seu público-alvo ideal..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="competitorPriceRange">Faixa de preço dos concorrentes <span class="required">*</span></label>
+                    <select id="competitorPriceRange" name="competitorPriceRange" required>
+                        <option value="">Selecione uma faixa</option>
+                        <option value="Abaixo de R$100">Abaixo de R$100</option>
+                        <option value="R$100-500">R$100-500</option>
+                        <option value="R$500-1000">R$500-1000</option>
+                        <option value="R$1000-5000">R$1000-5000</option>
+                        <option value="Acima de R$5000">Acima de R$5000</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Onde você pretende vender? <span class="required">*</span></label>
+                    <div class="checkbox-group" id="saleChannels">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="online" name="saleChannels" value="Online">
+                            <label for="online" class="checkbox-label">Online</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="physical" name="saleChannels" value="Loja física">
+                            <label for="physical" class="checkbox-label">Loja física</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="marketplace" name="saleChannels" value="Marketplace">
+                            <label for="marketplace" class="checkbox-label">Marketplace</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="social" name="saleChannels" value="Redes sociais">
+                            <label for="social" class="checkbox-label">Redes sociais</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="other" name="saleChannels" value="Outro">
+                            <label for="other" class="checkbox-label">Outro</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 4: CONTEXTO ADICIONAL -->
+            <div class="section" data-section="4">
+                <h2 class="section-title">Contexto Adicional</h2>
+
+                <div class="form-group">
+                    <label for="marketingBudget">Qual é o seu orçamento estimado para marketing? <span class="required">*</span></label>
+                    <select id="marketingBudget" name="marketingBudget" required>
+                        <option value="">Selecione uma faixa</option>
+                        <option value="Até R$ 1.000">Até R$ 1.000</option>
+                        <option value="R$ 1.000-5.000">R$ 1.000-5.000</option>
+                        <option value="R$ 5.000-20.000">R$ 5.000-20.000</option>
+                        <option value="R$ 20.000-50.000">R$ 20.000-50.000</option>
+                        <option value="Acima de R$ 50.000">Acima de R$ 50.000</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="launchTimeline">Prazo desejado para lançamento/crescimento <span class="required">*</span></label>
+                    <select id="launchTimeline" name="launchTimeline" required>
+                        <option value="">Selecione um prazo</option>
+                        <option value="Imediato">Imediato</option>
+                        <option value="1-3 meses">1-3 meses</option>
+                        <option value="3-6 meses">3-6 meses</option>
+                        <option value="6-12 meses">6-12 meses</option>
+                        <option value="Mais de 1 ano">Mais de 1 ano</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalInfo">Informações adicionais relevantes <span class="optional-text">(Opcional)</span></label>
+                    <textarea id="additionalInfo" name="additionalInfo" placeholder="Compartilhe qualquer informação adicional que achar relevante..."></textarea>
+                </div>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage">Formulário enviado com sucesso!</div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-previous" id="prevBtn" style="display: none;">← Anterior</button>
+                <button type="button" class="btn-next" id="nextBtn">Próximo →</button>
+                <button type="submit" class="btn-submit" id="submitBtn" style="display: none;">Enviar Formulário</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 4;
+        const form = document.getElementById("targetAudienceForm");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const submitBtn = document.getElementById("submitBtn");
+        const errorMessage = document.getElementById("errorMessage");
+        const successMessage = document.getElementById("successMessage");
+        const progressFill = document.querySelector(".progress-fill");
+        const sectionNumber = document.getElementById("sectionNumber");
+
+        // Configuração do webhook N8N (ALTERE PARA SEU WEBHOOK)
+        const N8N_WEBHOOK_URL = "https://pablommedeiros.app.n8n.cloud/webhook/target-audience-analysis";
+
+        function showSection(sectionNum) {
+            document.querySelectorAll(".section").forEach(el => el.classList.remove("active"));
+            document.querySelector(`[data-section="${sectionNum}"]`).classList.add("active");
+            
+            updateButtons();
+            updateProgress();
+            updateSectionIndicator();
+            window.scrollTo(0, 0);
+        }
+
+        function updateButtons() {
+            prevBtn.style.display = currentSection > 1 ? "block" : "none";
+            nextBtn.style.display = currentSection < totalSections ? "block" : "none";
+            submitBtn.style.display = currentSection === totalSections ? "block" : "none";
+        }
+
+        function updateProgress() {
+            const progress = (currentSection / totalSections) * 100;
+            progressFill.style.width = progress + "%";
+        }
+
+        function updateSectionIndicator() {
+            sectionNumber.textContent = `Seção ${currentSection} de ${totalSections}`;
+        }
+
+        function validateSection(sectionNum) {
+            const section = document.querySelector(`[data-section="${sectionNum}"]`);
+            const requiredFields = section.querySelectorAll("[required]");
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (field.type === "checkbox") {
+                    const checkboxes = form.querySelectorAll(`input[name="${field.name}"]:checked`);
+                    if (checkboxes.length === 0) {
+                        isValid = false;
+                    }
+                } else if (!field.value.trim()) {
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        function getFormData() {
+            const formData = new FormData(form);
+            const data = {};
+
+            formData.forEach((value, key) => {
+                if (key === "saleChannels") {
+                    if (!data.saleChannels) {
+                        data.saleChannels = [];
+                    }
+                    data.saleChannels.push(value);
+                } else {
+                    data[key] = value;
+                }
+            });
+
+            return data;
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+            setTimeout(() => {
+                errorMessage.style.display = "none";
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = "block";
+            errorMessage.style.display = "none";
+        }
+
+        nextBtn.addEventListener("click", () => {
+            if (validateSection(currentSection)) {
+                if (currentSection < totalSections) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            } else {
+                showError("Por favor, preencha todos os campos obrigatórios desta seção.");
+            }
+        });
+
+        prevBtn.addEventListener("click", () => {
+            if (currentSection > 1) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        });
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (!validateSection(currentSection)) {
+                showError("Por favor, preencha todos os campos obrigatórios.");
+                return;
+            }
+
+            const formData = getFormData();
+
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showSuccess("Formulário enviado com sucesso! Obrigado pelas informações.");
+                    form.reset();
+                    currentSection = 1;
+                    showSection(1);
+                    setTimeout(() => {
+                        successMessage.style.display = "none";
+                    }, 5000);
+                } else {
+                    showError("Erro ao enviar o formulário. Tente novamente.");
+                }
+            } catch (error) {
+                showError("Erro de conexão. Verifique se o webhook está configurado corretamente.");
+                console.error("Erro:", error);
+            }
+        });
+
+        // Inicializar
+        showSection(1);
+    </script>
+</body>
+</html>
+
